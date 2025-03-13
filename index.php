@@ -103,3 +103,42 @@ require 'config.php';
     </script>
 </body>
 </html>
+
+<?php
+// Include user authentication
+require 'auth.php';
+
+// Forgot password functionality
+require 'forgot_password.php';
+
+// Email and WhatsApp notification system
+require 'send_email.php';
+require 'send_whatsapp.php';
+
+// Admin panel to modify product prices
+require 'admin_panel.php';
+
+// send_email.php - Ensure emails go to deliteapparels@gmail.com
+require 'PHPMailer/PHPMailerAutoload.php';
+function sendOrderEmail($orderDetails) {
+    $mail = new PHPMailer;
+    $mail->isSMTP();
+    $mail->Host = 'smtp.gmail.com';
+    $mail->SMTPAuth = true;
+    $mail->Username = 'your-email@gmail.com'; // Replace with a valid Gmail
+    $mail->Password = 'your-email-password'; // Use App Password if 2FA is enabled
+    $mail->SMTPSecure = 'tls';
+    $mail->Port = 587;
+
+    $mail->setFrom('your-email@gmail.com', 'Delite Apparels');
+    $mail->addAddress('deliteapparels@gmail.com');
+    $mail->Subject = 'New Order Confirmation';
+    $mail->Body = "Order Number: " . $orderDetails['order_id'] . "\nName: " . $orderDetails['name'] . "\nPhone: " . $orderDetails['phone'] . "\nEmail: " . $orderDetails['email'] . "\nPrice: " . $orderDetails['price'];
+
+    if(!$mail->send()) {
+        return 'Mailer Error: ' . $mail->ErrorInfo;
+    } else {
+        return 'Message sent successfully!';
+    }
+}
+?>
